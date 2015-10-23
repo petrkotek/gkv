@@ -6,7 +6,7 @@ Currently comes with only one backend implementation - MySQL. `gkv` doesn't supp
 The only methods it supports are `Set(key, value)`, `Get(key)` and `Delete(key)`, where both `key` and `value` are strings. 
  
 ## Example Usage
-1. Create database table on your MySQL server, e.g.:
+#### 1. Create database table on your MySQL server, e.g.:
 ```sql
 CREATE TABLE `key_value_store`
   `key` VARCHAR(32) PRIMARY KEY,
@@ -14,12 +14,12 @@ CREATE TABLE `key_value_store`
 )
 ```
 
-2. Import `gkv` in your `.go` file:
+#### 2. Import `gkv` in your `.go` file:
 ```go
 import "github.com/petrkotek/gkv"
 ```
 
-3. Use `gkv`!
+#### 3. Use `gkv`!
 ```go
 db, err := sql.Open("mysql", "user:pwd@tcp(localhost:3306)/test_db")
 if err != nil {
