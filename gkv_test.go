@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"testing"
 
@@ -19,7 +20,7 @@ func TestMain(m *testing.M) {
 	// setUp
 	db, err = setUpMySQL()
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
@@ -59,6 +60,26 @@ func TestSQLKeyValueStore_GetAfterSetReturnsTheValue(t *testing.T) {
 	}
 	if value != "bar" {
 		t.Fatal("Get(foo) should return 'bar', got", value)
+	}
+}
+
+func TestSQLKeyValueStore_GetUInt64AfterSetUInt64ReturnsTheValue(t *testing.T) {
+	kv := setUp(t)
+	defer tearDown(db)
+	defer kv.Close()
+
+	for i, value := range []uint64{0, 42, math.MaxUint64} {
+		key := fmt.Sprintf("test_%d", i)
+		_ = kv.SetUInt64(key, value)
+
+		returnedValue, err := kv.GetUInt64(key)
+
+		if err != nil {
+			t.Errorf("Get(%s) shouldn't return an error, got %v", key, err)
+		}
+		if returnedValue != value {
+			t.Errorf("Get(%s) should return %d, got %v", key, value, returnedValue)
+		}
 	}
 }
 
@@ -167,8 +188,8 @@ func setUpMySQL() (*sql.DB, error) {
 	}
 
 	_, err = db.Exec("CREATE TABLE `test_config` (" +
-		"`key` VARCHAR(8) PRIMARY KEY," +
-		"`value` VARCHAR(8) NOT NULL" +
+		"`key` VARBINARY(8) PRIMARY KEY," +
+		"`value` VARBINARY(8) NOT NULL" +
 		")")
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create table: %v", err)
@@ -193,7 +214,6 @@ func setUp(t *testing.T) *SQLKeyValueStore {
 	}
 	return kv
 }
-
 
 func tearDown(db *sql.DB) {
 	_, err := db.Exec("TRUNCATE `test_config`")

@@ -9,8 +9,8 @@ The only methods it supports are `Set(key, value)`, `Get(key)` and `Delete(key)`
 #### 1. Create database table on your MySQL server, e.g.:
 ```sql
 CREATE TABLE `key_value_store`
-  `key` VARCHAR(32) PRIMARY KEY,
-  `value` VARCHAR(128) NOT NULL
+  `key` VARBINARY(32) PRIMARY KEY,
+  `value` VARBINARY(128) NOT NULL
 )
 ```
 

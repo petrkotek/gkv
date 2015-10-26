@@ -1,13 +1,19 @@
 package gkv
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/binary"
 	"fmt"
 )
 
 type KeyValueStore interface {
 	Get(key string) (string, error)
 	Set(key string, value string) error
+
+	GetUInt64(key string) (uint64, error)
+	SetUInt64(key string, value uint64) error
+
 	Del(key string) error
 
 	Close() error
@@ -47,7 +53,7 @@ func NewMySQLKeyValueStore(connection *sql.DB, config *SQLKeyValueStoreConfig) (
 		maxValueLen: config.MaxValueLen,
 	}
 
-	keyValueStore.stmtGet, err = connection.Prepare(fmt.Sprintf("SELECT `%s` FROM `%s` WHERE `%s` = ?", config.ValueColumn, config.TableName, config.KeyColumn))
+	keyValueStore.stmtGet, err = connection.Prepare(fmt.Sprintf("SELECT `%s` FROM `%s` WHERE `%s` = BINARY ?", config.ValueColumn, config.TableName, config.KeyColumn))
 	if err != nil {
 		return nil, err
 	}
@@ -88,6 +94,36 @@ func (s *SQLKeyValueStore) Set(key string, value string) error {
 		return fmt.Errorf("Value is too long")
 	}
 	_, err := s.stmtSet.Exec(key, value)
+
+	return err
+}
+
+func (s *SQLKeyValueStore) GetUInt64(key string) (uint64, error) {
+	data := make([]byte, 8)
+
+	row := s.stmtGet.QueryRow(key)
+	err := row.Scan(&data)
+
+	if err == sql.ErrNoRows {
+		return 0, nil
+	} else if err != nil {
+		return 0, err
+	}
+
+	var num uint64
+	err = binary.Read(bytes.NewBuffer(data[:]), binary.LittleEndian, &num)
+	if err != nil {
+		return 0, err
+	}
+
+	return num, nil
+}
+
+func (s *SQLKeyValueStore) SetUInt64(key string, value uint64) error {
+	data := make([]byte, 8)
+
+	binary.LittleEndian.PutUint64(data, value)
+	_, err := s.stmtSet.Exec(key, data)
 
 	return err
 }
