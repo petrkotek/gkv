@@ -21,13 +21,13 @@ type KeyValueStore interface {
 
 type SQLKeyValueStoreConfig struct {
 	// database table details
-	TableName   string
-	KeyColumn   string
-	ValueColumn string
+	TableName   string `yaml:"table_name"`
+	KeyColumn   string `yaml:"key_column"`
+	ValueColumn string `yaml:"value_column"`
 
 	// limits
-	MaxKeyLen   int
-	MaxValueLen int
+	MaxKeyLen   int `yaml:"max_key_len"`
+	MaxValueLen int `yaml:"max_value_len"`
 }
 
 type SQLKeyValueStore struct {
