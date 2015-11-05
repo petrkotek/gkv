@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/petrkotek/gkv.svg?branch=master)](https://travis-ci.org/petrkotek/gkv)
 [![Coverage Status](https://coveralls.io/repos/petrkotek/gkv/badge.svg?branch=master&service=github)](https://coveralls.io/github/petrkotek/gkv?branch=master)
 
 # gkv
