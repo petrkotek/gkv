@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/petrkotek/gkv/badge.svg?branch=master&service=github)](https://coveralls.io/github/petrkotek/gkv?branch=master)
+
 # gkv
 Extremely simple Key/Value store for Go (golang).
 
