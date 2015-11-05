@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - tip
+
+env:
+- TEST_DB=travis:@/gkv_test
+
+before_install:
+  - mysql -e 'create database gkv_test;'
+  - go get github.com/axw/gocov/gocov
+  - go get github.com/mattn/goveralls
+  - if ! go get github.com/golang/tools/cmd/cover; then go get golang.org/x/tools/cmd/cover; fi
+
+script:
+  - $HOME/gopath/bin/goveralls -service=travis-ci
